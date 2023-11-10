@@ -15,6 +15,7 @@ def home():
 def predict():
     if request.method == 'POST':
         data = request.get_json().get('data')  # Extract data from JSON in the request body
+        amount= request.get_json().get('amount')
         print(data)
         
         result = model.predict(data)
@@ -29,7 +30,7 @@ def predict():
         else:
             print("No match found.")
 
-        return jsonify({'prediction': result})  # Return prediction as JSON
+        return jsonify({'prediction': result,'amount':amount})  # Return prediction as JSON
 
 if __name__ == '__main__':
     app.run(debug=True)
