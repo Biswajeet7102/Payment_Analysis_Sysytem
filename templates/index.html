@@ -22,6 +22,10 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+
+        #descriptionInput {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -29,10 +33,18 @@
     <video id="preview"></video>
 
     <!-- Display prediction or loading message -->
-    <div id="predictionResult" class="center">Waiting for prediction...</div>
+    <div id="predictionResult" class="center"></div>
+
+    <!-- Description input box (initially hidden) -->
+    <div id="descriptionInput" class="center" style="display: none;">
+        <label for="description">Description:</label>
+        <input type="text" id="description" />
+    </div>
 
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
     <script>
+        let isCameraActive = false; // Variable to track the camera state
+
         // Initialize the camera
         let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
 
@@ -41,40 +53,64 @@
             // Stop the camera
             scanner.stop();
 
-            // Update loading message
-            const predictionResult = document.getElementById('predictionResult');
-            predictionResult.innerHTML = 'Predicting...';
+            // Extracted QR code information
+            const extractedInfo = content;
 
-            // Send a POST request to the '/predict' URL
+            // Display the extracted information
+            const predictionResult = document.getElementById('predictionResult');
+            predictionResult.innerHTML = 'QR Code Info: ' + extractedInfo;
+
+            // Hide the description input box
+            document.getElementById('descriptionInput').style.display = 'none';
+
+            // Create a new HTML file dynamically
+            const newHTML = document.createElement('div');
+            newHTML.innerHTML = `
+                <h2>QR Code Information</h2>
+                <p>${extractedInfo}</p>
+                <label for="description">Description:</label>
+                <input type="text" id="description" />
+                <button onclick="sendData()">Send Data</button>
+            `;
+
+            // Replace the body content with the new HTML
+            document.body.innerHTML = '';
+            document.body.appendChild(newHTML);
+
+            // Center the element
+            predictionResult.classList.add('center');
+        });
+
+        // Function to send data to '/predict/' URL
+        function sendData() {
+            const descriptionInput = document.getElementById('description');
+            const description = descriptionInput.value;
+
+            // Send a POST request to the '/predict/' URL
             fetch('http://localhost:5000/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ data: content }),
+                body: JSON.stringify({data: description }),
             })
             .then(response => response.json())
             .then(data => {
                 console.log('Server response:', data);
 
                 // Display the response on the front end
-                predictionResult.innerHTML = 'Prediction: ' + data.prediction;
-
-                // Center the element
-                predictionResult.classList.add('center');
+                alert('Prediction Result: ' + data.prediction);
             })
             .catch(error => {
                 console.error('Error sending POST request:', error);
-
-                // Update message in case of an error
-                predictionResult.innerHTML = 'Error predicting.';
-                predictionResult.classList.add('center');
+                alert('Error predicting.');
             });
-        });
+        }
 
         // Start the camera
         Instascan.Camera.getCameras().then(function (cameras) {
             if (cameras.length > 0) {
+                isCameraActive = true; // Set camera state to active
                 scanner.start(cameras[0]);
             } else {
                 console.error('No cameras found.');
