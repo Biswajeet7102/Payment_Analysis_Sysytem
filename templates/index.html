@@ -102,10 +102,6 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Server response:', data);
-
-                // Display the response on the front end
-                alert('Prediction Result: ' + data.prediction);
-                alert('Amount: ' + data.amount);
             })
             .catch(error => {
                 console.error('Error sending POST request:', error);

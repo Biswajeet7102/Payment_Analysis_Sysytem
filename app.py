@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request, jsonify
 import fasttext
 import re
+import datetime
 from flask_cors import CORS
 from flask_mysqldb import MySQL
 from db_config import DATABASE_CONFIG  # assuming you have a separate file for database configuration
@@ -43,13 +44,16 @@ def predict():
 
         try:
             cursor = mysql.connection.cursor()
-            cursor.execute("INSERT INTO payment_history (Prediction, Amount) VALUES (%s, %s)", (result, amount))
+            date = datetime.datetime.now()
+            cursor.execute("INSERT INTO payment_history (Prediction, Amount, Date) VALUES (%s, %s, %s)", (result, amount,date))
             mysql.connection.commit()
+            print("Success")
         except Exception as e:
             print(f"An error occurred: {e}")
         finally:
             if 'cursor' in locals():
                 cursor.close()
+            
 
         return jsonify({'prediction': result, 'amount': amount})  # Return prediction as JSON
 
