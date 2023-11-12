@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Range Analysis</title>
+</head>
+<body>
+    <h2>Date Range Analysis</h2>
+    <form id="dateForm">
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" required>
+
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" required>
+
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+    
+    <div id="responseTable"></div>
+
+    <script>
+        function submitForm() {
+            // Get values from input fields
+            var startDate = document.getElementById('startDate').value;
+            var endDate = document.getElementById('endDate').value;
+
+            // Create JSON object
+            var data = {
+                startDate: startDate,
+                endDate: endDate
+            };
+
+            // Convert JSON to string
+            var jsonData = JSON.stringify(data);
+
+            // Send JSON data to '/analysis_pred' using fetch
+            fetch('http://localhost:5000/analysis_pred', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle response from the server
+                console.log('Response:', data);
+
+                // Display response in a table
+                displayResponseTable(data);
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('Error:', error.message);
+            });
+        }
+
+        function displayResponseTable(data) {
+            // Create a table element
+    var table = document.createElement('table');
+    table.style.borderCollapse = "collapse"; // Add border-collapse style
+
+    // Create table header
+    var headerRow = table.insertRow(0);
+    var headerCell1 = headerRow.insertCell(0);
+    var headerCell2 = headerRow.insertCell(1);
+    headerCell1.textContent = 'Category';
+    headerCell2.textContent = 'Amount';
+
+    // Style table header cells
+    headerCell1.style.border = "1px solid #ddd";
+    headerCell2.style.border = "1px solid #ddd";
+    headerCell1.style.padding = "8px";
+    headerCell2.style.padding = "8px";
+
+    // Populate table with response data
+    for (var i = 0; i < data.length; i++) {
+        var row = table.insertRow(i + 1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        cell1.textContent = data[i].category;
+        cell2.textContent = data[i].amount;
+
+        // Style table cells
+        cell1.style.border = "1px solid #ddd";
+        cell2.style.border = "1px solid #ddd";
+        cell1.style.padding = "8px";
+        cell2.style.padding = "8px";
+    }
+
+    // Style table rows
+    for (var i = 0; i < table.rows.length; i++) {
+        table.rows[i].style.border = "1px solid #ddd";
+    }
+
+    // Append table to the responseTable div
+    document.getElementById('responseTable').innerHTML = '';
+    document.getElementById('responseTable').appendChild(table);
+        }
+    </script>
+</body>
+</html>
