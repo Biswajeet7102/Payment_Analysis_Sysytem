@@ -15,6 +15,11 @@ Welcome to the Payment Analysis System, a project designed to provide a streamli
     - View categorized expenditures and track spending patterns over time.
     - Select date ranges for detailed analysis between specific periods.
 
+3. SQL Backend:
+    - A robust SQL backend stores essential payment information.
+    - Fields include the date of the payment, category of payment, and amount.
+    - Facilitates efficient retrieval and management of payment data.
+
 ### Installation
 
 Follow these steps to set up the project locally:
@@ -37,14 +42,18 @@ Follow these steps to set up the project locally:
 ### Important Notes
 
     NLP Model Limitations:
-    The NLP model used for categorizing expenditures is pre-trained and might not be optimal due to a limited dataset. Future improvements are planned to enhance its performance.
+    The NLP model used for categorizing expenditures is pre-trained and might not be optimal due to a limited dataset.
+    Future improvements are planned to enhance its performance.
 
     Frontend and UI Considerations:
 
-    The project's frontend and UI are part of a prototype and may not be fully polished. Future iterations will focus on improving the user interface.
-    Scalability:
+    The project's frontend and UI are part of a prototype and may not be fully polished. 
+    Future iterations will focus on improving the user interface.
 
+    Scalability:
     Keep in mind that this version is a prototype, and there are plans to scale the project for broader use in subsequent stages.
     
-    Feel free to explore, contribute, and provide feedback for the continuous improvement of the Payment Analysis System. Happy analyzing!
+    Feel free to explore, contribute, and provide feedback for the continuous improvement of the Payment Analysis System. 
+    
+    Happy analyzing!
 
