@@ -39,6 +39,7 @@ Follow these steps to set up the project locally:
     - A sample qr code is added. Download this on your phone so that you scan it through your laptop's web cam. 
     - Open your preferred web browser and navigate to the provided local address.
     - Explore the payment features and analysis capabilities of the system.
+    - Video link for the project : https://drive.google.com/file/d/1NbkwN8WNK6yV1Uf2MLydnhV6-MQ7AH9G/view?usp=drive_link
 
 ### Important Notes
 
