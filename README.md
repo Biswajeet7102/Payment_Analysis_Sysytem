@@ -1,7 +1,7 @@
 ## Payment Analysis System ReadMe
 
 ### Overview
-Welcome to the Payment Analysis System, a project designed to provide a streamlined approach to tracking and analyzing your expenditures. This system integrates seamlessly with your UPI system, allowing you to make payments through a QR code and simultaneously collect data for expenditure analysis.
+Welcome to the Payment Analysis System, a project designed to provide a streamlined approach to tracking and analyzing your expenditures. This system integrates seamlessly with your payment system, allowing you to make payments through a QR code and simultaneously collect data for expenditure analysis.
 
 ### Features
 1. Payment through QR Code:
