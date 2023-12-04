@@ -36,7 +36,7 @@ Follow these steps to set up the project locally:
     python app.py
     ```
 4. Enjoy:
-    - A sample qr code is added. Download this on your phone so that you scan it through your laptop. 
+    - A sample qr code is added. Download this on your phone so that you scan it through your laptop's web cam. 
     - Open your preferred web browser and navigate to the provided local address.
     - Explore the payment features and analysis capabilities of the system.
 
