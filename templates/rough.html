@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Code Scanner</title>
+    <style>
+      /* Styles for QR code scanning page */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #080f20; /* Background color added */
+        color: #fff; /* Text color changed to white */
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* Hide overflow */
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 50px;
+        color: #fff; /* Heading color changed to white */
+      }
+
+      #preview {
+        width: 80%; /* Adjusted width for camera feed */
+        height: 80vh; /* Adjusted height for larger camera feed */
+        margin: auto;
+        display: block;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+      }
+
+      #predictionResult {
+        margin-top: 20px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      #descriptionInput {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #fff; /* Label color changed to white */
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      button:focus {
+        outline: none;
+      }
+
+      /* Styles for page after QR code scanning */
+      h2 {
+        text-align: center;
+        margin-top: 50px;
+        color: #fff;
+      }
+
+      p {
+        text-align: center;
+        color: #fff;
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        color: #fff;
+        text-align: center;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: rgba(255, 255, 255, 0.1); /* Transparent background */
+        color: #fff;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        display: block;
+        margin: auto;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      button:focus {
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>QR Code Scanner</h1>
+    <video id="preview"></video>
+
+    <!-- Display prediction or loading message -->
+    <div id="predictionResult" class="center"></div>
+
+    <!-- Description input box -->
+    <div id="descriptionInput" class="center" style="display: none">
+      <label for="description">Description:</label>
+      <input type="text" id="description" />
+      <label for="amount">Amount:</label>
+      <input type="text" id="amount" />
+
+      <button onclick="sendData()">Send Data</button>
+    </div>
+
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script>
+      // Initialize the camera
+      let scanner = new Instascan.Scanner({
+        video: document.getElementById("preview"),
+      });
+
+      // Listen for scan events
+      scanner.addListener("scan", function (content) {
+        // Stop the camera
+        scanner.stop();
+
+        // Extracted QR code information
+        const extractedInfo = content;
+
+        // Display the extracted information
+        const predictionResult = document.getElementById("predictionResult");
+        predictionResult.innerHTML = "QR Code Info: " + extractedInfo;
+
+        // Show the description input box
+        const descriptionInput = document.getElementById("descriptionInput");
+        descriptionInput.style.display = "block";
+
+        // Create a new HTML file dynamically
+        const newHTML = document.createElement("div");
+        newHTML.innerHTML = `
+          <h2>QR Code Information</h2>
+          <p>${extractedInfo}</p>
+          <label for="description">Description:</label>
+          <input type="text" id="description" />
+          <label for="amount">Amount:</label>
+          <input type="text" id="amount" />
+
+          <button onclick="sendData()">Send Data</button>
+      `;
+
+        // Replace the body content with the new HTML
+        document.body.innerHTML = "";
+        document.body.appendChild(newHTML);
+
+        // Center the element
+        predictionResult.classList.add("center");
+      });
+
+      // Function to send data to '/predict/' URL
+      function sendData() {
+        const descriptionInput = document.getElementById("description");
+        const amountInput = document.getElementById("amount");
+
+        const description = descriptionInput.value;
+        const amount = amountInput.value;
+
+        // Send a POST request to the '/predict/' URL
+        fetch("http://localhost:5000/predict", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ data: description, amount: amount }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Server response:", data);
+          })
+          .catch((error) => {
+            console.error("Error sending POST request:", error);
+            alert("Error predicting.");
+          });
+      }
+
+      // Start the camera
+      Instascan.Camera.getCameras()
+        .then(function (cameras) {
+          if (cameras.length > 0) {
+            scanner.start(cameras[0]);
+          } else {
+            console.error("No cameras found.");
+
+            // Update message if no cameras are found
+            const predictionResult =
+              document.getElementById("predictionResult");
+            predictionResult.innerHTML = "No cameras found.";
+            predictionResult.classList.add("center");
+          }
+        })
+        .catch(function (e) {
+          console.error(e);
+
+          // Update message in case of an error
+          const predictionResult = document.getElementById("predictionResult");
+          predictionResult.innerHTML = "Error starting the camera.";
+          predictionResult.classList.add("center");
+        });
+    </script>
+  </body>
+</html>

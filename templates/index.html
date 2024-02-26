@@ -1,134 +1,352 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Scanner</title>
-    <style>
-        #preview {
-            width: 100%;
-            max-width: 600px;
-            margin: auto;
-        }
+  <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   
+  <title>QR Code Scanner</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #080f20;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
 
-        #predictionResult {
-            margin-top: 20px;
-            font-weight: bold;
-        }
+    #preview-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
+    #preview {
+      width: 80%;
+      height: 80vh;
+      border: 2px solid transparent;
+      border-radius: 5px;
+    }
 
-        #descriptionInput {
-            margin-top: 20px;
-        }
-    </style>
+    #card {
+      /* width: 50%;
+      margin: auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 20px; */
+      width: 350px;
+      background: #fff;
+      padding: 30px;
+      position: relative;
+      display: none; /* Hide initially */
+    }
+    *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root{
+    --text-color : #233052;
+}
+body{
+    display: flex;
+    min-height: 100vh;
+    background-color: #080f20;
+    align-items: center;
+    justify-content: center;
+}
+.container{
+    width: 350px;
+    background: #fff;
+    padding: 30px;
+    position: relative;
+    
+}
+h6{
+    font-size: 20px;
+    color: var(--text-color);
+}
+span{
+    position: absolute;
+    right: 34px;
+    top: 28px;
+    font-size: 18px;
+    color: var(--text-color);
+}
+h1{
+    padding: 30px 0px;
+    font-size: 40px;
+    color: var(--text-color);
+}
+form label{
+    color: var(--text-color);
+    text-transform: uppercase;
+    position: relative;
+    font-size: 10px;
+    word-spacing: 4px;
+}
+form select{
+    width: 100%;
+    outline: none;
+    border:none;
+    border-bottom: 1px solid rgb(223, 223, 223);
+    text-transform: capitalize;
+    padding-top: 3px;
+    color: var(--text-color);
+    padding-bottom: 3px;
+    font-size: 18px;
+    margin-left: -3px;
+    margin-bottom: 20px;
+    background-color:transparent;
+
+}
+form #cardno{
+    width: 100%;
+    outline: none;
+    border:none;
+    border-bottom: 1px solid rgb(223, 223, 223);
+    padding-top: 5px;
+    margin-bottom: 20px;
+    padding-bottom: 5px;
+    padding-right: 30px;
+    color: var(--text-color);
+    font-size: 18px;
+    background-color:transparent;
+}
+form label img{
+    position: absolute;
+    left: 264px;
+    top:17px;
+    width: 20px;
+    height: 20px;
+}
+.float{
+    display: flex;
+}
+#validtill, #cvv{
+    width: 100%;
+    outline: none;
+    border:none;
+    border-bottom: 1px solid rgb(223, 223, 223);
+    padding-top: 5px;
+    margin-bottom: 20px;
+    padding-bottom: 5px;
+    padding-right: 30px;
+    color: var(--text-color);
+    font-size: 18px;
+    background-color:transparent;
+}
+p{
+    margin-left: 25px;
+    margin-bottom: 56px;
+    margin-top: -20px;
+    font-size: 16px;
+    text-transform: none;
+}
+button{
+    border: none;
+    outline: none;
+    background: #233052;
+    color: rgb(223, 223, 223);
+    width: 100%;
+    height:40px;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+    
+    
+  </style>
 </head>
 <body>
-    <h1>QR Code Scanner</h1>
+  <div id="preview-container">
     <video id="preview"></video>
+  </div>
 
-    <!-- Display prediction or loading message -->
-    <div id="predictionResult" class="center"></div>
+  <!-- Card component for input after scanning -->
+  <div id="card">
+      <h6>Checkout</h6>
+      <h1>Pay Your Money</h1>
+      <form id="myForm">
+  
+      <label for="cardno">Amount
+        <input type="text" name="cardno" id="cardno" maxlength="19">
+      </label>
+      <div class="float">
+      <label for="validtill">Description
+          <input type="text" name="validtill" id="validtill">
+      </label>
+      </div>
+      <div>
+        <label for="checkbox">
+          <input type="checkbox" name="checkbox" id="checkbox"/>
+          <div>
+            <p>Make sure you are paying to the right person</p></label>
+          </div>
+      </div>
+      <div><button id="payButton" onclick="sendData() "onmouseover="hoverButton()" onmouseout="resetButton()">Pay $0.00</button></div>
+      </form>
+    
+  <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+  <script>
+    function hoverButton() {
+        var button = document.getElementById('payButton');
+        button.style.cursor = 'pointer';
+        button.style.backgroundColor = '#161e31'; // Change to your desired color
+    }
 
-    <!-- Description input box -->
-    <div id="descriptionInput" class="center" style="display: none;">
-        <label for="description">Description:</label>
-        <input type="text" id="description" />
-    </div>
+    function resetButton() {
+        var button = document.getElementById('payButton');
+        button.style.cursor = 'default';
+        button.style.backgroundColor = '#233052'; // Reset to the default color
+    }
+</script>
+  <script>
+    // Function to send data to backend
+    function sendData() {
+      if (window.formSubmitted) {
+        return;
+    }
 
-    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-    <script>
-        // Initialize the camera
-        let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+    // Set the flag to indicate that the form has been submitted
+    window.formSubmitted = true;
 
-        // Listen for scan events
-        scanner.addListener('scan', function (content) {
-            // Stop the camera
-            scanner.stop();
+    // Fetch data from the form
+    const descriptionInput = document.getElementById("validtill");
+    const amountInput = document.getElementById("cardno");
 
-            // Extracted QR code information
-            const extractedInfo = content;
+    const description = descriptionInput.value;
+    const amount = amountInput.value;
 
-            // Display the extracted information
-            const predictionResult = document.getElementById('predictionResult');
-            predictionResult.innerHTML = 'QR Code Info: ' + extractedInfo;
+    // Clear the content of the page
+    document.body.innerHTML = '';
 
-            // Show the description input box
-            const descriptionInput = document.getElementById('descriptionInput');
-            descriptionInput.style.display = 'block';
+    // Create and append dotlottie-player element
+    var dotlottiePlayer = document.createElement('dotlottie-player');
+    dotlottiePlayer.setAttribute('background', 'transparent');
+    dotlottiePlayer.setAttribute('speed', '1');
+    dotlottiePlayer.setAttribute('style', 'width: 30%; height: 30%');
+    dotlottiePlayer.setAttribute('direction', '1');
+    dotlottiePlayer.setAttribute('playMode', 'normal');
+    dotlottiePlayer.setAttribute('loop', '');
+    dotlottiePlayer.setAttribute('autoplay', '');
 
-            // Create a new HTML file dynamically
-            const newHTML = document.createElement('div');
-            newHTML.innerHTML = `
-                <h2>QR Code Information</h2>
-                <p>${extractedInfo}</p>
-                <label for="description">Description:</label>
-                <input type="text" id="description" />
-                <label for="amount">Amount:</label>
-                <input type="text" id="amount" />
-                
-                <button onclick="sendData()">Send Data</button>
-            `;
 
-            // Replace the body content with the new HTML
-            document.body.innerHTML = '';
-            document.body.appendChild(newHTML);
+    // Load the loading animation
+    dotlottiePlayer.setAttribute('src', 'https://lottie.host/31557abd-49e0-41eb-9a76-759461c32395/6QCGZbc3MY.json');
 
-            // Center the element
-            predictionResult.classList.add('center');
-        });
+    // Append the dotlottie-player element to the body
+    document.body.appendChild(dotlottiePlayer);
 
-        // Function to send data to '/predict/' URL
-        function sendData() {
-            const descriptionInput = document.getElementById('description');
-            const amountInput = document.getElementById('amount');
+    // Send data to backend
+    fetch("http://localhost:5000/predict", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ data: description, amount: amount }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        responseData = data;
+        console.log("Response from server:", data);
+        // Handle response from server if needed
+        
+        // Clear the content of the page
+        document.body.innerHTML = '';
 
-            const description = descriptionInput.value;
-            const amount = amountInput.value;
+        // Create and append dotlottie-player element
+        var dotlottiePlayer = document.createElement('dotlottie-player');
+        dotlottiePlayer.setAttribute('background', 'transparent');
+        dotlottiePlayer.setAttribute('speed', '1');
+        dotlottiePlayer.setAttribute('style', 'width: 50%; height: 50%');
+        dotlottiePlayer.setAttribute('direction', '1');
+        dotlottiePlayer.setAttribute('playMode', 'normal');
+        dotlottiePlayer.setAttribute('autoplay', '');
+     
 
-            // Send a POST request to the '/predict/' URL
-            fetch('http://localhost:5000/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ data: description, amount: amount }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Server response:', data);
-            })
-            .catch(error => {
-                console.error('Error sending POST request:', error);
-                alert('Error predicting.');
-            });
+        // Load the appropriate animation based on the server response
+        if (responseData) {
+            // If successful response, load the success animation
+            dotlottiePlayer.setAttribute('src', 'https://lottie.host/b8b45091-f984-47ea-a3c1-9c29ed4e4bec/EGp3NFZ5HW.json');
         }
 
-        // Start the camera
-        Instascan.Camera.getCameras().then(function (cameras) {
-            if (cameras.length > 0) {
-                scanner.start(cameras[0]);
-            } else {
-                console.error('No cameras found.');
+        // Append the dotlottie-player element to the body
+        document.body.appendChild(dotlottiePlayer);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        // Handle error
+    });
+    }
 
-                // Update message if no cameras are found
-                const predictionResult = document.getElementById('predictionResult');
-                predictionResult.innerHTML = 'No cameras found.';
-                predictionResult.classList.add('center');
-            }
-        }).catch(function (e) {
-            console.error(e);
+    document.getElementById('myForm').addEventListener('payButton', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+        sendData(); // Call the sendData function when the form is submitted
+    });
 
-            // Update message in case of an error
-            const predictionResult = document.getElementById('predictionResult');
-            predictionResult.innerHTML = 'Error starting the camera.';
-            predictionResult.classList.add('center');
-        });
-    </script>
+    // Initialize the camera
+    let scanner = new Instascan.Scanner({
+      video: document.getElementById("preview"),
+    });
+
+    // Listen for scan events
+    scanner.addListener("scan", function (content) {
+      // Stop the camera
+      scanner.stop();
+
+      // Hide the camera preview
+      document.getElementById("preview-container").style.display = "none";
+
+      // Show the card component
+      const card = document.getElementById("card");
+      card.style.display = "block";
+    });
+
+    // Start the camera
+    Instascan.Camera.getCameras()
+      .then(function (cameras) {
+        if (cameras.length > 0) {
+          scanner.start(cameras[0]);
+        } else {
+          console.error("No cameras found.");
+
+          // Update message if no cameras are found
+          const previewContainer = document.getElementById("preview-container");
+          previewContainer.innerHTML = "<p class='center'>No cameras found.</p>";
+        }
+      })
+      .catch(function (e) {
+        console.error(e);
+
+        // Update message in case of an error
+        const previewContainer = document.getElementById("preview-container");
+        previewContainer.innerHTML = "<p class='center'>Error starting the camera.</p>";
+      });
+      document.addEventListener("DOMContentLoaded", function () {
+    // Get references to the input and button elements
+    const cardnoInput = document.getElementById("cardno");
+    const payButton = document.getElementById("payButton");
+
+    // Add an input event listener to the cardno input
+    cardnoInput.addEventListener("input", function () {
+        // Get the current value of the input
+        const amount = parseFloat(cardnoInput.value);
+
+        // Update the button text with the formatted amount
+        payButton.innerText = `Pay $${amount.toFixed(2)}`;
+    });
+});
+
+  </script>
+  
 </body>
 </html>

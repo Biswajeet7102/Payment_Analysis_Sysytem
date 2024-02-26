@@ -1,108 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Date Range Analysis</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Date Range Analysis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #080f20;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    input[type="date"] {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #122e65;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 5%;
+    }
+
+    button:hover {
+      background-color: #6c84bb;
+    }
+
+    /* Add scroll styling to the table part */
+    .table-wrapper {
+      overflow-y: auto; /* Add vertical scroll when content exceeds container height */
+      max-height: 200px; /* Set maximum height for the scroll */
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-wrapper table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #ffffff; /* White background for table */
+      border-radius: 10px;
+    }
+
+    .table-wrapper th,
+    .table-wrapper td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      color: #000000; /* Black text color */
+    }
+
+    .table-wrapper th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .table-wrapper tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
     <h2>Date Range Analysis</h2>
+
     <form id="dateForm">
-        <label for="startDate">Start Date:</label>
-        <input type="date" id="startDate" required>
+      <label for="startDate">Start Date:</label>
+      <input type="date" id="startDate" required />
 
-        <label for="endDate">End Date:</label>
-        <input type="date" id="endDate" required>
+      <label for="endDate">End Date:</label>
+      <input type="date" id="endDate" required />
 
-        <button type="button" onclick="submitForm()">Submit</button>
+      <button type="button" onclick="submitForm()">Submit</button>
     </form>
-    
-    <div id="responseTable"></div>
 
-    <script>
-        function submitForm() {
-            // Get values from input fields
-            var startDate = document.getElementById('startDate').value;
-            var endDate = document.getElementById('endDate').value;
+    <!-- Wrap the response table in a div with the class "table-wrapper" -->
+    <div id="responseTableWrapper" class="table-wrapper"></div>
+  </div>
 
-            // Create JSON object
-            var data = {
-                startDate: startDate,
-                endDate: endDate
-            };
+  <script>
+    function submitForm() {
+      // Get values from input fields
+      var startDate = document.getElementById("startDate").value;
+      var endDate = document.getElementById("endDate").value;
 
-            // Convert JSON to string
-            var jsonData = JSON.stringify(data);
+      // Create JSON object
+      var data = {
+        startDate: startDate,
+        endDate: endDate,
+      };
 
-            // Send JSON data to '/analysis_pred' using fetch
-            fetch('http://localhost:5000/analysis_pred', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: jsonData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Handle response from the server
-                console.log('Response:', data);
+      // Convert JSON to string
+      var jsonData = JSON.stringify(data);
 
-                // Display response in a table
-                displayResponseTable(data);
-            })
-            .catch(error => {
-                // Handle errors
-                console.error('Error:', error.message);
-            });
-        }
+      // Send JSON data to '/analysis_pred' using fetch
+      fetch("http://localhost:5000/analysis_pred", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonData,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Handle response from the server
+          console.log("Response:", data);
 
-        function displayResponseTable(data) {
-            // Create a table element
-    var table = document.createElement('table');
-    table.style.borderCollapse = "collapse"; // Add border-collapse style
+          // Display response in a table
+          displayResponseTable(data);
+        })
+        .catch((error) => {
+          // Handle errors
+          console.error("Error:", error.message);
+        });
+    }
 
-    // Create table header
-    var headerRow = table.insertRow(0);
-    var headerCell1 = headerRow.insertCell(0);
-    var headerCell2 = headerRow.insertCell(1);
-    headerCell1.textContent = 'Category';
-    headerCell2.textContent = 'Amount';
+    function displayResponseTable(data) {
+      // Create a table element
+      var table = document.createElement("table");
 
-    // Style table header cells
-    headerCell1.style.border = "1px solid #ddd";
-    headerCell2.style.border = "1px solid #ddd";
-    headerCell1.style.padding = "8px";
-    headerCell2.style.padding = "8px";
+      // Create table header
+      var headerRow = table.insertRow(0);
+      var headerCell1 = headerRow.insertCell(0);
+      var headerCell2 = headerRow.insertCell(1);
+      headerCell1.textContent = "Category";
+      headerCell2.textContent = "Amount";
 
-    // Populate table with response data
-    for (var i = 0; i < data.length; i++) {
+      // Populate table with response data
+      for (var i = 0; i < data.length; i++) {
         var row = table.insertRow(i + 1);
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
         cell1.textContent = data[i].category;
         cell2.textContent = data[i].amount;
+      }
 
-        // Style table cells
-        cell1.style.border = "1px solid #ddd";
-        cell2.style.border = "1px solid #ddd";
-        cell1.style.padding = "8px";
-        cell2.style.padding = "8px";
+      // Append table to the responseTableWrapper div
+      var tableWrapper = document.getElementById("responseTableWrapper");
+      tableWrapper.innerHTML = "";
+      tableWrapper.appendChild(table);
     }
-
-    // Style table rows
-    for (var i = 0; i < table.rows.length; i++) {
-        table.rows[i].style.border = "1px solid #ddd";
-    }
-
-    // Append table to the responseTable div
-    document.getElementById('responseTable').innerHTML = '';
-    document.getElementById('responseTable').appendChild(table);
-        }
-    </script>
+  </script>
 </body>
 </html>

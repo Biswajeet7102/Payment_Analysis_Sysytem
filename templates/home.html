@@ -1,18 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Navigation Page</title>
-</head>
-<body>
+    <style>
+      html {
+        zoom: 75%; /* Adjust the percentage to your preference */
+      }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #080f20;
+        color: #fff;
+        font-weight: bold;
+      }
 
-    <h1>Choose an Option</h1>
+      #navbar {
+        background-color: #080f20;
+        padding: 40px;
+        text-align: left;
+      }
 
-    <ul>
-        <li><a href="index.html">Click for Payment</a></li>
-        <li><a href="analysis.html">Click for analysis</a></li>
-    </ul>
+      #navbar a {
+        color: #fff;
+        text-decoration: none;
+        margin-right: 10px;
+      }
 
-</body>
+      .center-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 50px;
+      }
+
+      #container {
+        background-color: #080f20;
+        padding: 20px;
+        border-radius: 10px;
+        width: 60%; /* Adjusted width */
+        margin-top: 90px;
+      }
+
+      h1 {
+        margin-top: 50px; /* Adjusted margin from the top */
+        margin-right: 20px; /* Adjusted margin from the right */
+        font-size: 36px;
+        color: #ffffff;
+      }
+
+      p {
+        font-size: 50px;
+        font-weight: bold;
+        color: #ffffff;
+        margin-bottom: 20px;
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 40px;
+        display: flex; /* Add flex display to make buttons side by side */
+      }
+
+      li {
+        margin-bottom: 20px;
+        animation: fadeInUp 0.5s ease forwards;
+        opacity: 0;
+        font-size: 20px;
+      }
+
+      @keyframes fadeInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      li:nth-child(1) {
+        animation-delay: 0.3s;
+      }
+
+      li:nth-child(2) {
+        animation-delay: 0.6s;
+      }
+
+      a {
+        text-decoration: none;
+        background-color: #080f20;
+        color: #fff;
+        padding: 20px 40px; /* Increase padding to make buttons larger */
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        font-size: 24px; /* Increase font size */
+        margin-right: 20px; /* Add margin between buttons */
+      }
+
+      a:hover {
+        background-color: #a960ca;
+      }
+
+      #image-container {
+        width: 30%;
+      }
+
+      #image-container img {
+        width: 100%;
+        border-radius: 10px;
+      }
+
+      @media (max-width: 768px) {
+        .center-container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        #container {
+          width: 90%;
+        }
+
+        #image-container {
+          width: 70%;
+          margin-top: 20px;
+        }
+      }
+      img {
+        margin-top: 90px;
+      }
+    </style>
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            var paymentLink = document.querySelector("li:nth-child(1) a");
+            var paymentAnalysisLink = document.querySelector("li:nth-child(2) a");
+
+            paymentLink.style.backgroundColor = "#a960ca";
+            paymentAnalysisLink.style.backgroundColor = "#080f20";
+    
+            paymentLink.addEventListener("mouseover", function () {
+              paymentLink.style.backgroundColor = "#a960ca";
+              paymentAnalysisLink.style.backgroundColor = "#080f20";
+            });
+    
+            paymentAnalysisLink.addEventListener("mouseover", function () {
+              paymentLink.style.backgroundColor = "#080f20";
+              paymentAnalysisLink.style.backgroundColor = "#a960ca";
+            });
+    
+            paymentAnalysisLink.addEventListener("mouseout", function () {
+              paymentLink.style.backgroundColor = "#a960ca";
+              paymentAnalysisLink.style.backgroundColor = "#080f20";
+            });
+          });
+        </script>
+  </head>
+  <body>
+    <div id="navbar">
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Services</a>
+      <a href="#">Contact</a>
+    </div>
+
+    <div class="center-container">
+      <div id="container">
+        <p>
+          Effortlessly scan QR codes with our fast and secure website, unlocking
+          information and actions instantly.
+        </p>
+        <div>
+          <ul>
+            <li><a href="index.html">Payment</a></li>
+            <li><a href="analysis.html">Payment Analysis</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="image-container">
+        <img src="{{ url_for('static', filename='A.png') }}" alt="Image A">
+      </div>
+    </div>
+  </body>
 </html>
