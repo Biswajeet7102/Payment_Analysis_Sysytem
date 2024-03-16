@@ -2,6 +2,9 @@
 from flask import Flask, render_template, request, jsonify
 import fasttext
 import json
+import PyPDF2
+import os
+import requests
 import re
 from datetime import datetime
 from decimal import Decimal
@@ -32,6 +35,73 @@ def index():
 @app.route('/analysis.html')
 def analysis():
     return render_template('analysis.html')
+
+@app.route("/upload.html")
+def upload():
+    return render_template("upload.html")
+
+# Route to handle file upload
+@app.route("/upload", methods=["POST"])
+def upload_file():
+    if 'pdf_file' not in request.files:
+        return "No file part"
+    
+    pdf_file = request.files['pdf_file']
+    if pdf_file.filename == '':
+        return "No selected file"
+    
+    if pdf_file : 
+        pdf_file.save(r"C:\Payment_Type_Classifiation\UPLOAD_PDF" + pdf_file.name +".pdf")
+        
+
+    def pdf_to_text(pdf_file_path):
+        text = ""
+        with open(pdf_file_path, 'rb') as file:
+            pdf_reader = PyPDF2.PdfReader(file)
+            num_pages = len(pdf_reader.pages)
+
+            for page_num in range(num_pages):
+                page = pdf_reader.pages[page_num]
+                text += page.extract_text() + ' '
+
+        return text
+
+# Example usage:
+    pdf_file_path = "C://Payment_Type_Classifiation//UPLOAD_PDFpdf_file.pdf"  # Path to your PDF file
+    text = pdf_to_text(pdf_file_path)
+    
+    
+
+    print(text)
+    
+    
+    pattern = r'(\d{2}-\d{2}-\d{2})\s(.*?)\s\$(\d+\.\d{2})'
+    matches = re.findall(pattern, text)
+
+    data = {}
+    for match in matches:
+        description = match[1]
+        charges = float(match[2])
+        if description in data:
+            data[description] += charges
+        else:
+            data[description] = charges
+    data = {key: str(value) for key, value in data.items()}
+
+    print("Description and Total Charges Dictionary:")
+    print(data)
+    url = "http://localhost:5000/predict"
+    for description, amount in data.items():
+        payload = {'data': description, 'amount': amount}
+        response = requests.post(url, json=payload)
+        if response.status_code == 200:
+            print(f"Prediction for {description} with amount {amount} sent successfully.")
+        else:
+            print(f"Failed to send prediction for {description} with amount {amount}. Status code: {response.status_code}")
+
+
+    
+    return jsonify({"success": True, "message": "PDF content received and processed successfully"})
     
 
 

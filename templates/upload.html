@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Uploader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            /* margin: 0; */
+            margin-top: 15%;
+            padding: 0;
+            background-color: #080f20;
+        }
+        #content {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        button[type="submit"] {
+            color: rgb(233, 220, 220);
+            background-color: rgb(39, 35, 47);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button[type="submit"]:hover {
+            background-color:rgb(148, 142, 142);
+        }
+        #loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            width: 125%;
+            height: 125%;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h2>Upload a PDF file</h2>
+        <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
+            <input type="file" name="pdf_file" accept=".pdf" required>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+
+    <div id="loader">
+        <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+        <dotlottie-player src="https://lottie.host/342e082a-e48a-4e95-88d8-4a606f5a733f/zr5x8Q4mj2.json" background="transparent" speed="1" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; width: 125%; height: 125%;" loop autoplay></dotlottie-player>
+    </div>
+
+    <script>
+        // Add event listener to the form for showing the message
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('content').innerHTML = ''; // Clear all content
+            document.getElementById('loader').style.display = 'block'; // Show loader
+            
+            // Fetch the URL to submit the form data
+            const url = this.getAttribute('action');
+            // Create FormData object to send file data
+            const formData = new FormData(this);
+            // Fetch options
+            const fetchOptions = {
+                method: 'POST',
+                body: formData
+            };
+            
+            // Send the form data to the server
+            fetch(url, fetchOptions)
+            .then(response => response.json()) // Parse the JSON response
+            .then(data => {
+                // Log the success message to the console
+                console.log(data);
+                
+                // Remove existing loader
+                const existingLoader = document.getElementById('loader');
+                existingLoader.parentNode.removeChild(existingLoader);
+                
+                // Create new loader element
+                const newLoader = document.createElement('dotlottie-player');
+                newLoader.setAttribute('src', 'https://lottie.host/e1d72a22-d14b-4fef-8a95-916964b4a515/z89QteOs8Y.json');
+                newLoader.setAttribute('background', 'transparent');
+                newLoader.setAttribute('speed', '1');
+                newLoader.setAttribute('style', 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; width: 75%; height: 75%;');
+                newLoader.setAttribute('direction', '1');
+                newLoader.setAttribute('playMode', 'normal');
+                newLoader.setAttribute('autoplay', '');
+                
+                // Append new loader to document
+                document.body.appendChild(newLoader);
+            })
+            .catch(error => {
+                // Log any errors to the console
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
